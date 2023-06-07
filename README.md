@@ -9,7 +9,7 @@
 
 
 # Architecture Design
-(https://raw.githubusercontent.com/MindorksOpenSource/MVVM-Architecture-Android-Beginners/master/assets/mvvm-arch.png") 
+![mvvm-architecture.png](https://postimg.cc/4HN8GmG3)
 
 The main component in the MVVM design pattern are :
 
