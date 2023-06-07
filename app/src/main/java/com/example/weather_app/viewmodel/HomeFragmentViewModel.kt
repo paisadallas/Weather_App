@@ -23,8 +23,14 @@ class HomeFragmentViewModel @Inject constructor(
     private val getWeatherUseCase: GetWeatherUseCase
 ) : ViewModel() {
 
+    private val _weatherCity: MutableLiveData<WeatherCity> =
+        MutableLiveData()
+    val weatherCity: LiveData<WeatherCity> get() = _weatherCity
+
     private val TAG = "WEATHER_TAG"
 
+    private val _currentCityMutableLiveData: MutableLiveData<String> = MutableLiveData()
+    val currentCityLiveData : LiveData<String> get() = _currentCityMutableLiveData
     private val _weatherCity: MediatorLiveData<Resource<WeatherCity>?> =
         MediatorLiveData()
     val weatherCity: LiveData<Resource<WeatherCity>?> get() = _weatherCity
