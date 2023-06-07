@@ -20,6 +20,9 @@ class HomeFragmentViewModel @Inject constructor(
         MutableLiveData()
     val weatherCity: LiveData<WeatherCity> get() = _weatherCity
 
+    private val _currentCityMutableLiveData: MutableLiveData<String> = MutableLiveData()
+    val currentCityLiveData : LiveData<String> get() = _currentCityMutableLiveData
+
     fun getCityWeather(){
         repository.getCityWeather("Dallas")
             .subscribeOn(Schedulers.io())
