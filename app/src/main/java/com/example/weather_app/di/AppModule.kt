@@ -20,9 +20,13 @@ import java.util.concurrent.TimeUnit
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
+    // Module providing dependencies for the application
+
+    // Provides Gson object
     @Provides
     fun providesGson() : Gson = Gson()
 
+    // Provides HttpLoggingInterceptor object
     @Provides
     fun providesLoggingInterceptor() : HttpLoggingInterceptor {
         return HttpLoggingInterceptor().apply {
@@ -30,6 +34,7 @@ object AppModule {
         }
     }
 
+    // Provides OkHttpClient object
     @Provides
     fun provideOkHttpClient(httpLoggingInterceptor: HttpLoggingInterceptor) : OkHttpClient{
         return OkHttpClient.Builder()
@@ -40,6 +45,7 @@ object AppModule {
             .build()
     }
 
+    // Provides API object using Retrofit
     @Provides
     fun injectRetrofitAPI(okHttpClient: OkHttpClient, gson: Gson) : API {
         return Retrofit.Builder()
@@ -51,6 +57,7 @@ object AppModule {
             .create(API::class.java)
     }
 
+    // Provides WeatherRepository object
     @Provides
     fun provideRepository(api: API) : WeatherRepository {
         return WeatherImpl(api)

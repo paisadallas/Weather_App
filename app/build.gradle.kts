@@ -86,4 +86,8 @@ dependencies {
     //okhttp
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
+
+    //picasso
+    //picasso
+    implementation ("com.squareup.picasso:picasso:2.8")
 }

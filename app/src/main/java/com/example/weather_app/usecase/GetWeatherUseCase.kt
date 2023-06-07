@@ -17,19 +17,30 @@ class GetWeatherUseCase @Inject constructor(
 
     private val TAG = "WEATHER_TAG_USE_CASE"
 
-    fun invoke() : LiveData<Resource<WeatherCity>> {
+    /**
+     *   // This method is invoked to fetch weather data for a given city query.
+     *     // It returns a LiveData object that holds the resource state of the weather data.
+     */
+    fun invoke(cityQuery: String) : LiveData<Resource<WeatherCity>> {
+        // Create a MutableLiveData object to hold the weather data resource
         val setWeatherMutableLiveData = MutableLiveData<Resource<WeatherCity>>()
+
+        // Call the getCityWeather method of the weatherRepository to fetch the weather data
         weatherRepository.run {
-            getCityWeather("Dallas")
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
+            getCityWeather(cityQuery)
+                .subscribeOn(Schedulers.io()) // Perform the operation on the I/O thread
+                .observeOn(AndroidSchedulers.mainThread()) // Observe the result on the main thread
                 .subscribe({
+                    // When the weather data is successfully fetched, post a Success resource state
                            setWeatherMutableLiveData.postValue(Resource.Success(it))
                     Log.d(TAG, it.name)
                 },{
+                    // When an error occurs, post an Error resource state with the error message
                     Log.e(TAG,it.localizedMessage)
+                    setWeatherMutableLiveData.postValue(Resource.Error(it.localizedMessage))
                 })
         }
+        // Return the MutableLiveData object
         return setWeatherMutableLiveData
     }
 }

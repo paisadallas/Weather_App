@@ -6,5 +6,6 @@ data class WeatherCity(
     @SerializedName("name")
     val name: String,
     val cod: Int,
-    val id: String
+    val id: String,
+    val weather: ArrayList<Weather>
 )
