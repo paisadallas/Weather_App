@@ -9,7 +9,7 @@
 
 
 # Architecture Design
-![mvvm-architecture.png](https://postimg.cc/4HN8GmG3)
+MVVM
 
 The main component in the MVVM design pattern are :
 
