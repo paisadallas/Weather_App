@@ -26,15 +26,40 @@ class HomeFragmentViewModel @Inject constructor(
 
     private val TAG = "WEATHER_TAG"
 
-    private val _currentCityMutableLiveData: MutableLiveData<String> = MutableLiveData()
-    val currentCityLiveData : LiveData<String> get() = _currentCityMutableLiveData
     private val _weatherCity: MediatorLiveData<Resource<WeatherCity>?> =
         MediatorLiveData()
     val weatherCity: LiveData<Resource<WeatherCity>?> get() = _weatherCity
 
+
+    private var _currentCityMutableLiveData: MutableLiveData<String> = MutableLiveData()
+    val currentCityLiveData : LiveData<String> get() = _currentCityMutableLiveData
+
+    //Reload data
+    private var _reloadMutableLiveData: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply {
+        postValue(true)
+    }
+    val reloadLiveData : LiveData<Boolean> get() = _reloadMutableLiveData
+
+    // Method to update the reloadLiveData value
+    fun reloadData(reload : Boolean ){
+        viewModelScope.launch {
+            _reloadMutableLiveData.postValue(reload)
+        }
+    }
+
+    // Method to update the currentCityLiveData value
+    fun updateCity(city:String){
+
+        viewModelScope.launch {
+            _currentCityMutableLiveData.value = city
+            Log.d(TAG,currentCityLiveData.value.toString())
+        }
+    }
+
+    // Method to fetch weather data using the getWeatherUseCase
     fun getMutableLiveData(){
        viewModelScope.launch {
-           val responseWeather = getWeatherUseCase.invoke()
+           val responseWeather = getWeatherUseCase.invoke(currentCityLiveData.value.toString())
             _weatherCity.addSource(responseWeather){
                 _weatherCity.postValue(it)
             }

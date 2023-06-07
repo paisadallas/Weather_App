@@ -9,7 +9,6 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -18,10 +17,10 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import com.example.weather_app.R
 import com.example.weather_app.util.Resource
 import com.example.weather_app.databinding.FragmentHomeBinding
 import com.example.weather_app.viewmodel.HomeFragmentViewModel
+import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 import java.util.logging.Logger
@@ -31,9 +30,9 @@ class HomeFragment : Fragment(), LocationListener {
 
     private val viewModelHome : HomeFragmentViewModel by viewModels()
 
+    // Lazily initialize the binding using FragmentHomeBinding
     private lateinit var locationManager: LocationManager
     private lateinit var context: Context
-    private val TAG2 = "WEATHER_TAG_LIVEDATA"
 
     private val binding by lazy {
         FragmentHomeBinding.inflate(layoutInflater)
@@ -49,22 +48,34 @@ class HomeFragment : Fragment(), LocationListener {
         savedInstanceState: Bundle?
     ): View? {
 
-        // Location
+        // Get the system location service
         locationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
+        // Observe weatherCity LiveData in the view model and update the UI accordingly
         viewModelHome.weatherCity.observe(viewLifecycleOwner){
 
             when(it){
                 is Resource.Loading -> {
-                    Log.d(TAG2, "Loading...")
                 }
                 is Resource.Success -> {
-                    Log.d(TAG2, it.data?.name ?: "NUll on Fragment")
+                    Picasso.get()
+                        .load("https://openweathermap.org/img/wn/${it.data?.weather?.get(0)?.icon}@2x.png")
+                        .resize(500,500)
+                        .centerCrop()
+                        .into(binding.imgWeather)
+                    binding.tvCity.text = it.data?.name
+                    binding.tvMain.text = it.data?.weather?.get(0)?.main
+                    binding.tvDescription.text = it.data?.weather?.get(0)?.description
                 }
 
                 is Resource.Error ->{
                     it.throwable?.let {
-                        it.localizedMessage?.let { it1 -> Logger.getLogger(it1) }
+                        it.localizedMessage?.let {
+                            it1 -> Logger.getLogger(it1)
+                            Toast.makeText(requireContext(), "Error $it", Toast.LENGTH_SHORT).show()
+
+                        }
+
                     }
                 }
                 else ->{
@@ -74,13 +85,15 @@ class HomeFragment : Fragment(), LocationListener {
 
         }
 
-        viewModelHome.getMutableLiveData()
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        initClickListener()
+
+        // Check if the location permission is granted, if not request it
         if (ContextCompat.checkSelfPermission(
             context,
             android.Manifest.permission.ACCESS_FINE_LOCATION
@@ -91,10 +104,28 @@ class HomeFragment : Fragment(), LocationListener {
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }else {
+            // Start receiving location updates
             startLocationUpdates()
         }
     }
 
+    // Initialize the click listener for the submit button
+    private fun initClickListener() {
+        binding.summitDataButton.setOnClickListener { submitButtonClicked() }
+    }
+
+    // Handle the click event of the submit button
+    private fun submitButtonClicked() {
+        var city : String = binding.etCity.text.toString()
+        var state : String = binding.etState.text.toString()
+        var country : String = binding.etCountry.text.toString()
+
+        var cityQuery = "$city,$state,$country"
+        viewModelHome.updateCity(cityQuery)
+        viewModelHome.getMutableLiveData()
+    }
+
+    // Start receiving location updates
     private fun startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(
             requireContext(),
@@ -121,10 +152,16 @@ class HomeFragment : Fragment(), LocationListener {
         if (addresses.isNotEmpty()) {
             val city = addresses[0].locality
             Toast.makeText(requireContext(), "Current city $city", Toast.LENGTH_SHORT).show()
-            binding.etCity.setText(city)
-            viewModelHome.currentCityLiveData.observe(viewLifecycleOwner){
-                 city
+
+            viewModelHome.reloadLiveData.observe(viewLifecycleOwner){
+                if (it){
+                    viewModelHome.reloadData(false)
+                    binding.etCity.setText(city.toString())
+                    viewModelHome.updateCity(city)
+                    viewModelHome.getMutableLiveData()
+                }
             }
+
         }
     }
 
