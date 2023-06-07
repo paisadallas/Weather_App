@@ -2,10 +2,11 @@
     <string name="app_name">Weather_App</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="city_code">City Code</string>
-    <string name="country_code">Country code</string>
-    <string name="state_code">State code</string>
+    <string name="city_code">City</string>
+    <string name="country_code">Country</string>
+    <string name="state_code">State</string>
     <string name="city">city</string>
     <string name="code">code</string>
     <string name="country">country</string>
+    <string name="title_app">Weather\n</string>
 </resources>

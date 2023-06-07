@@ -12,11 +12,20 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/title_label"
             android:orientation="vertical">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/title_app"
+                android:textAlignment="center"
+                android:text="@string/title_app" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/title_label"
                 android:text="@string/city_code" />
 
             <EditText
@@ -30,6 +39,7 @@
                 android:id="@+id/textView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/title_label"
                 android:text="@string/state_code" />
 
             <EditText
@@ -43,6 +53,7 @@
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="@dimen/title_label"
                 android:text="@string/country_code" />
 
             <EditText
@@ -56,6 +67,7 @@
                 android:id="@+id/summit_data_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/title_label"
                 android:text="Get Weather" />
 
             <androidx.cardview.widget.CardView
